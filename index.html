@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="辛萌的工作平台">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#c87b5a">
+<title>辛萌的工作平台</title>
+<style>
+:root{--bg:#f7f3ef;--card:#fff;--soft:#faf6f2;--pri:#c87b5a;--pl:#e8b8a0;--pd:#a85e3f;--acc:#7ba07b;--al:#c8e6c8;--t1:#3d3530;--t2:#8a7d72;--t3:#bbb;--bd:#ece4dc;--sh:0 1px 8px rgba(61,53,48,.05);--r:14px;--rs:10px;--sb:env(safe-area-inset-bottom,0px)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-bottom:calc(62px + var(--sb))}
+::-webkit-scrollbar{width:0;height:0}
+.appbar{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#c87b5a,#d49b7a);color:#fff;padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(200,123,90,.2)}
+.appbar-title{font-size:18px;font-weight:700}.appbar-date{font-size:12px;opacity:.85}
+.appbar-streak{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.page{display:none;animation:fade .25s}.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:var(--r);margin:12px 16px;padding:18px;box-shadow:var(--sh)}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.card-h .ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-h h3{font-size:15px;font-weight:700}.card-h .tag{margin-left:auto;font-size:11px;color:var(--t2);background:var(--soft);padding:2px 10px;border-radius:10px}
+.greet{padding:20px 20px 10px}.greet h2{font-size:22px;font-weight:700;margin-bottom:4px}.greet p{font-size:13px;color:var(--t2)}
+.stats-row{display:flex;gap:10px;padding:0 16px;margin-bottom:6px}
+.stat-box{flex:1;background:var(--card);border-radius:var(--rs);padding:14px;text-align:center;box-shadow:var(--sh)}
+.stat-num{font-size:24px;font-weight:700;color:var(--pri)}.stat-num.green{color:var(--acc)}.stat-lbl{font-size:11px;color:var(--t2);margin-top:2px}
+.checklist .ci{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd)}.checklist .ci:last-child{border:0}
+.ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px;color:#fff}
+.ck.on{background:var(--acc);border-color:var(--acc)}.ck.on::after{content:'\2713';font-weight:700}
+.ci-txt{flex:1}.ci-t{font-size:14px;font-weight:500}.ci-d{font-size:12px;color:var(--t2);margin-top:2px}.ci-done .ci-t{text-decoration:line-through;color:var(--t3)}
+.plat-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto}.plat-tabs::-webkit-scrollbar{display:none}
+.ptab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;white-space:nowrap;border:1.5px solid var(--bd);background:var(--card);color:var(--t2);cursor:pointer;flex-shrink:0}
+.ptab.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.hot-item{background:var(--card);border-radius:var(--r);margin:0 16px 12px;overflow:hidden;box-shadow:var(--sh)}
+.hot-top{display:flex;align-items:flex-start;gap:10px;padding:14px 14px 10px}
+.hot-rank{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.hot-rank.t1{background:#e85555}.hot-rank.t2{background:var(--pri)}.hot-rank.t3{background:var(--pd)}.hot-rank.tn{background:var(--t3)}
+.hot-info{flex:1;min-width:0}.hot-title{font-size:14px;font-weight:600;margin-bottom:3px;line-height:1.4}.hot-title a{color:var(--t1);text-decoration:none}.hot-title a:active{color:var(--pri)}.hot-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--pri);text-decoration:none;margin-top:6px;padding:4px 10px;border-radius:6px;background:rgba(200,123,90,.08)}.hot-link:active{background:rgba(200,123,90,.18)}
+.hot-meta{font-size:11px;color:var(--t2);display:flex;gap:8px;flex-wrap:wrap}.heat{color:var(--pri);font-weight:600}
+.hot-analysis{padding:0 14px 14px;border-top:1px dashed var(--bd);margin-top:4px;padding-top:12px;display:none}
+.hot-analysis.show{display:block}
+.analyze-row{display:flex;gap:8px;margin-bottom:8px;font-size:12px}.analyze-lbl{color:var(--pri);font-weight:600;flex-shrink:0;min-width:60px}.analyze-txt{color:var(--t2);flex:1}
+.expand-btn{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 14px;font-size:12px;color:var(--pri);cursor:pointer;border-top:1px solid var(--bd)}
+.expand-btn .arr{transition:transform .2s}.expand-btn .arr.up{transform:rotate(180deg)}
+.create-card{background:var(--card);border-radius:var(--r);margin:0 16px 12px;overflow:hidden;box-shadow:var(--sh)}
+.create-top{padding:14px;border-left:4px solid var(--pri)}
+.create-type{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;margin-bottom:6px}
+.ct-photo{background:#f0e6ff;color:#7c5cab}.ct-video{background:#e6f0ff;color:#5a7cb8}.ct-topic{background:#e6ffe6;color:#5a8c5a}
+.create-title{font-size:15px;font-weight:700;margin-bottom:6px}.create-desc{font-size:13px;color:var(--t2);line-height:1.7}.create-desc strong{color:var(--t1)}
+.create-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--pri);text-decoration:none;margin-top:8px;padding:5px 12px;border-radius:8px;background:rgba(200,123,90,.08);border:1px solid rgba(200,123,90,.15)}.create-link:active{background:rgba(200,123,90,.2)}
+.create-detail{padding:0 14px 14px;font-size:12px}
+.cd-row{display:flex;gap:6px;padding:6px 0;border-bottom:1px solid var(--bd)}.cd-row:last-child{border:0}
+.cd-lbl{color:var(--pri);font-weight:600;min-width:50px;flex-shrink:0}.cd-val{color:var(--t2);flex:1}
+.create-visual{position:relative;margin:12px 0 0;border-radius:var(--rs);overflow:hidden;height:160px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+.create-visual img{width:100%;height:100%;object-fit:cover}
+.create-visual .vs-placeholder{text-align:center;color:var(--t3)}.create-visual .vs-placeholder .vs-emoji{font-size:48px;display:block;margin-bottom:4px}
+.create-visual .vs-play{position:absolute;bottom:8px;right:8px;display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:20px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(4px)}.create-visual .vs-play:active{background:rgba(0,0,0,.85)}
+.create-grad{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9);font-size:14px;font-weight:600;text-align:center;padding:12px;line-height:1.5}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:8px;background:var(--pri);color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;margin-top:8px}
+.fit-day-info{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-radius:var(--r);margin:12px 16px;padding:16px;border:1.5px solid var(--al)}
+.fit-day-label{font-size:12px;color:var(--acc);font-weight:600;margin-bottom:4px}
+.fit-day-name{font-size:18px;font-weight:700}.fit-day-sub{font-size:13px;color:var(--t2);margin-top:2px}
+.fit-ex{background:var(--card);border-radius:var(--r);margin:0 16px 10px;overflow:hidden;box-shadow:var(--sh)}
+.fit-ex-h{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer}
+.fit-ex-num{width:28px;height:28px;border-radius:8px;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.fit-ex-info{flex:1}.fit-ex-name{font-size:14px;font-weight:600}.fit-ex-meta{font-size:11px;color:var(--t2);margin-top:2px}
+.fit-ex-arrow{color:var(--t3);transition:transform .2s;font-size:14px}.fit-ex-arrow.open{transform:rotate(90deg)}
+.fit-ex-body{display:none;padding:0 14px 14px;border-top:1px dashed var(--bd)}.fit-ex-body.show{display:block}
+.fit-tip{font-size:12px;color:var(--t2);margin-top:10px;padding:8px 12px;background:#fff8e1;border-radius:8px;border-left:3px solid #ffc107}.fit-tip strong{color:#e65100}
+.fit-sets{font-size:13px;font-weight:700;color:var(--pri);white-space:nowrap}
+.fit-week{display:flex;gap:6px;padding:12px 16px;justify-content:space-between}
+.fit-day-dot{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:11px;background:var(--card);box-shadow:var(--sh)}
+.fit-day-dot.active{background:var(--pri);color:#fff}.fit-day-dot.rest{opacity:.5}
+.fit-day-dot .dn{font-size:14px;font-weight:700;margin-bottom:2px}.fit-day-dot .dt{font-size:10px}
+.biz-item{background:var(--card);border-radius:var(--r);margin:0 16px 10px;padding:14px;box-shadow:var(--sh)}
+.biz-top{display:flex;align-items:flex-start;gap:10px}
+.biz-num{width:24px;height:24px;border-radius:7px;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.biz-content{flex:1}.biz-title{font-size:14px;font-weight:600;margin-bottom:4px}.biz-detail{font-size:12px;color:var(--t2);line-height:1.6}
+.biz-bottom{display:flex;align-items:center;gap:8px;margin-top:8px}
+.biz-profit{padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f5e9;color:var(--acc)}
+.biz-save{margin-left:auto;padding:4px 12px;border-radius:8px;font-size:12px;border:1.5px solid var(--bd);background:var(--soft);color:var(--t2);cursor:pointer}
+.biz-save.saved{background:var(--pri);color:#fff;border-color:var(--pri)}
+.biz-expand{cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:var(--pri);padding:10px 0 4px;border-top:1px dashed var(--bd);margin-top:8px;user-select:none}
+.biz-expand .arr{transition:transform .3s;font-size:10px}
+.biz-expand .arr.up{transform:rotate(180deg)}
+.biz-plan{display:none;margin-top:4px}
+.biz-plan.show{display:block}
+.biz-plan-label{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.biz-steps{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.biz-step{display:flex;align-items:flex-start;gap:8px;background:var(--soft);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;color:var(--t1)}
+.biz-step-num{width:20px;height:20px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.biz-step-text{flex:1}
+.biz-links{display:flex;flex-direction:column;gap:5px}
+.biz-link{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#f0f4ff;border-radius:8px;font-size:12px;color:var(--pri);text-decoration:none;font-weight:500;transition:background .2s}
+.biz-link:hover,.biz-link:active{background:#e0e8ff}
+.biz-link .bl-icon{font-size:14px}
+.word-flash{margin:16px;perspective:1000px}
+.word-card3d{position:relative;width:100%;min-height:200px;cursor:pointer;transform-style:preserve-3d;transition:transform .5s}
+.word-card3d.flipped{transform:rotateY(180deg)}
+.wc-face{position:absolute;width:100%;min-height:200px;border-radius:var(--r);padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.wc-front{background:linear-gradient(135deg,#f5f0ff,#faf7f3)}
+.wc-back{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);transform:rotateY(180deg)}
+.wc-num{font-size:12px;color:var(--t3);margin-bottom:8px}.wc-word{font-size:28px;font-weight:700;color:#5a3d8f;margin-bottom:6px}
+.wc-phon{font-size:14px;color:var(--t2);font-style:italic;margin-bottom:16px}.wc-hint{font-size:13px;color:var(--t3)}
+.wc-meaning{font-size:18px;font-weight:600;color:var(--acc);margin-bottom:8px}.wc-example{font-size:13px;color:var(--t2);font-style:italic;line-height:1.5}
+.wc-actions{display:flex;gap:10px;margin-top:16px}
+.wc-act{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0;border-radius:12px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.wc-speak{background:#e8f0ff;color:#4a6fbf}.wc-speak:active,.wc-speak.on{background:#4a6fbf;color:#fff}
+.wc-follow{background:#fff0e8;color:#d4793d}.wc-follow:active,.wc-follow.on{background:#d4793d;color:#fff}
+.wc-follow.listening{animation:pulse 1s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.wc-feedback{text-align:center;font-size:13px;margin-top:8px;min-height:20px}
+.wc-fb-good{color:var(--acc)}.wc-fb-retry{color:#e8a03d}.wc-fb-none{color:var(--t3)}
+.alpha-box{background:var(--card);border-radius:var(--r);margin:12px 16px;padding:0;box-shadow:var(--sh);overflow:hidden}
+.alpha-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer}.alpha-head:active{background:var(--soft)}
+.alpha-head h4{font-size:13px;color:var(--t2)}.alpha-head .alpha-arr{font-size:12px;color:var(--t3);transition:transform .3s}.alpha-head .alpha-arr.open{transform:rotate(180deg)}
+.alpha-body{display:none;padding:0 16px 16px;flex-wrap:wrap;gap:6px}.alpha-body.show{display:flex}
+.alpha-cell{text-align:center;min-width:42px;padding:6px 2px;border-radius:8px;background:var(--soft)}.alpha-cell .al{font-size:16px;font-weight:700;color:var(--pri)}.alpha-cell .ap{font-size:10px;color:var(--t2);margin-top:1px}
+.word-nav{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin-bottom:16px}
+.wnav-btn{width:44px;height:44px;border-radius:50%;border:2px solid var(--bd);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--pri)}
+.wnav-pos{font-size:14px;font-weight:600;color:var(--t2)}.wnav-pos b{color:var(--pri);font-size:18px}
+.word-list-item{background:var(--card);border-radius:var(--rs);margin:0 16px 6px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)}
+.wli-word{font-size:16px;font-weight:700;color:#5a3d8f;flex:1}.wli-meaning{font-size:12px;color:var(--t2)}
+.wli-status{font-size:11px;padding:2px 8px;border-radius:6px}.wli-known{background:#e8f5e9;color:var(--acc)}.wli-unknown{background:#fff3ee;color:var(--pri)}
+.eng-timer{background:var(--card);border-radius:var(--r);margin:16px;padding:16px;box-shadow:var(--sh);display:flex;align-items:center;justify-content:space-between}
+.timer-d{font-size:28px;font-weight:700;color:var(--pri);font-variant-numeric:tabular-nums}.timer-l{font-size:12px;color:var(--t2)}
+.timer-btn{padding:8px 20px;border-radius:20px;border:none;background:var(--pri);color:#fff;font-size:14px;font-weight:600;cursor:pointer}.timer-btn.running{background:var(--pd)}
+.weekly-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none}.weekly-overlay.show{display:block}
+.weekly-panel{position:absolute;bottom:0;left:0;right:0;background:var(--bg);border-radius:24px 24px 0 0;max-height:85vh;overflow-y:auto;padding:20px 20px calc(30px + var(--sb));animation:su .3s}
+@keyframes su{from{transform:translateY(100%)}to{transform:none}}
+.weekly-close{position:absolute;top:16px;right:20px;font-size:24px;color:var(--t3);cursor:pointer}.weekly-title{font-size:20px;font-weight:700;margin-bottom:16px}
+.week-chart{display:flex;align-items:flex-end;gap:8px;height:160px;margin-bottom:16px;background:var(--card);border-radius:var(--r);padding:16px}
+.week-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;max-width:32px;border-radius:6px 6px 0 0;min-height:4px;background:linear-gradient(180deg,var(--pri),var(--pl))}.bar-fill.full{background:linear-gradient(180deg,var(--acc),var(--al))}
+.bar-lbl{font-size:11px;color:var(--t2)}.bar-val{font-size:11px;font-weight:600;color:var(--pri)}
+.week-stats{display:flex;gap:10px;margin-bottom:16px}
+.week-stat{flex:1;background:var(--card);border-radius:var(--r);padding:16px;text-align:center;box-shadow:var(--sh)}
+.week-stat .n{font-size:22px;font-weight:700}.week-stat .l{font-size:11px;color:var(--t2);margin-top:2px}
+.week-section{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.week-section h4{font-size:14px;font-weight:700;margin-bottom:10px}.week-section p{font-size:13px;color:var(--t2);line-height:1.7}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(58px + var(--sb));padding-bottom:var(--sb);background:var(--card);border-top:1px solid var(--bd);display:flex;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.04)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--t3);transition:color .2s;padding-top:6px}
+.nav-item.on{color:var(--pri)}.nav-item .ni{font-size:20px;line-height:1}.nav-item .nt{font-size:10px;font-weight:500}
+.toast{position:fixed;bottom:calc(80px + var(--sb));left:50%;transform:translateX(-50%);background:rgba(61,53,48,.9);color:#fff;padding:10px 24px;border-radius:24px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
+.hint-box{background:#fff8e1;border-radius:var(--rs);padding:12px 14px;margin:12px 16px;font-size:12px;color:#7c5c00;line-height:1.6;border-left:3px solid #ffc107}
+.section-title{padding:16px 20px 8px;font-size:13px;font-weight:600;color:var(--t2)}
+</style>
+</head>
+<body>
+<!-- App Bar -->
+<div class="appbar"><div><div class="appbar-title">辛萌的工作平台</div><div class="appbar-date" id="appbarDate"></div></div><div class="appbar-streak" id="streakBadge">🔥 0天</div></div>
+
+<!-- ===== 今日 ===== -->
+<div class="page active" id="page-today">
+<div class="greet"><h2 id="greetTitle">你好</h2><p id="greetSub">今天也要闪闪发光 ✨</p></div>
+<div class="stats-row">
+<div class="stat-box"><div class="stat-num" id="todayDone">0</div><div class="stat-lbl">今日完成</div></div>
+<div class="stat-box"><div class="stat-num green" id="todayTotal">0</div><div class="stat-lbl">今日任务</div></div>
+<div class="stat-box"><div class="stat-num" id="weekRate">0%</div><div class="stat-lbl">本周完成率</div></div>
+</div>
+<div class="card"><div class="card-h"><div class="ico" style="background:#fff3ee">📋</div><h3>今日打卡清单</h3><span class="tag" id="checkProgress">0/0</span></div><div class="checklist" id="checklist"></div></div>
+<div class="card" id="weeklyReportCard" style="display:none"><div class="card-h"><div class="ico" style="background:#e8f5e9">📊</div><h3>本周复盘</h3></div><p style="font-size:13px;color:var(--t2);margin-bottom:10px">周日复盘时间到！看看本周表现</p><button class="copy-btn" style="width:100%;justify-content:center" onclick="openWeekly()">查看周复盘报告</button></div>
+<div class="hint-box">💡 每天早8点自动更新内容，健身日19:30收到提醒。打卡数据本地保存，离线可查看。</div>
+</div>
+
+<!-- ===== 爆款 ===== -->
+<div class="page" id="page-hot">
+<div class="plat-tabs"><div class="ptab on" onclick="swPlat(event,'douyin')">抖音热搜</div><div class="ptab" onclick="swPlat(event,'xhs')">小红书</div><div class="ptab" onclick="swPlat(event,'bili')">B站</div><div class="ptab" onclick="swPlat(event,'video')">视频号</div></div>
+<div id="plat-douyin"></div>
+<div id="plat-xhs" style="display:none"></div>
+<div id="plat-bili" style="display:none"></div>
+<div id="plat-video" style="display:none"></div>
+</div>
+<!-- ===== 创作 ===== -->
+<div class="page" id="page-create">
+<div class="section-title">✨ 今日二创建议 · 专属你的风格</div>
+<div id="createList"></div>
+</div>
+
+<!-- ===== 健身 ===== -->
+<div class="page" id="page-fit">
+<div class="fit-week" id="fitWeek"></div>
+<div class="fit-day-info" id="fitTodayInfo"></div>
+<div id="fitExercises"></div>
+<div class="hint-box">💡 点击动作卡片查看<strong>器械教程、标准要点和避伤提示</strong>。健身日19:30会自动推送提醒。</div>
+</div>
+<!-- ===== 商机 ===== -->
+<div class="page" id="page-biz">
+<div class="section-title">💰 今日商机雷达 · 赚钱信息每日更新</div>
+<div class="biz-list" id="bizList"></div>
+</div>
+
+<!-- ===== 英语 ===== -->
+<div class="page" id="page-eng">
+<div class="section-title">🔤 零基础英语 · 每天10个日常词</div>
+
+<!-- 字母表 -->
+<div class="alpha-box">
+<div class="alpha-head" onclick="togAlpha()"><h4>📖 26个英文字母（忘了？点这里复习）</h4><span class="alpha-arr" id="alphaArr">▼</span></div>
+<div class="alpha-body" id="alphaBody">
+<div class="alpha-cell"><div class="al">Aa</div><div class="ap">诶</div></div><div class="alpha-cell"><div class="al">Bb</div><div class="ap">必</div></div><div class="alpha-cell"><div class="al">Cc</div><div class="ap">西</div></div><div class="alpha-cell"><div class="al">Dd</div><div class="ap">弟</div></div><div class="alpha-cell"><div class="al">Ee</div><div class="ap">衣</div></div><div class="alpha-cell"><div class="al">Ff</div><div class="ap">艾弗</div></div><div class="alpha-cell"><div class="al">Gg</div><div class="ap">寄</div></div><div class="alpha-cell"><div class="al">Hh</div><div class="ap">诶去</div></div><div class="alpha-cell"><div class="al">Ii</div><div class="ap">爱</div></div><div class="alpha-cell"><div class="al">Jj</div><div class="ap">这</div></div><div class="alpha-cell"><div class="al">Kk</div><div class="ap">颗诶</div></div><div class="alpha-cell"><div class="al">Ll</div><div class="ap">艾欧</div></div><div class="alpha-cell"><div class="al">Mm</div><div class="ap">艾姆</div></div>
+<div class="alpha-cell"><div class="al">Nn</div><div class="ap">恩</div></div><div class="alpha-cell"><div class="al">Oo</div><div class="ap">欧</div></div><div class="alpha-cell"><div class="al">Pp</div><div class="ap">批</div></div><div class="alpha-cell"><div class="al">Qq</div><div class="ap">克尤</div></div><div class="alpha-cell"><div class="al">Rr</div><div class="ap">阿儿</div></div><div class="alpha-cell"><div class="al">Ss</div><div class="ap">艾斯</div></div><div class="alpha-cell"><div class="al">Tt</div><div class="ap">替</div></div><div class="alpha-cell"><div class="al">Uu</div><div class="ap">优</div></div><div class="alpha-cell"><div class="al">Vv</div><div class="ap">威</div></div><div class="alpha-cell"><div class="al">Ww</div><div class="ap">达不溜</div></div><div class="alpha-cell"><div class="al">Xx</div><div class="ap">艾克斯</div></div><div class="alpha-cell"><div class="al">Yy</div><div class="ap">外</div></div><div class="alpha-cell"><div class="al">Zz</div><div class="ap">贼</div></div>
+</div></div>
+
+<!-- 单词卡 -->
+<div class="word-flash"><div class="word-card3d" id="wordCard" onclick="flipWord()">
+<div class="wc-face wc-front"><div class="wc-num" id="wcNum">第 1 / 10 个</div><div class="wc-word" id="wcWord">Hello</div><div class="wc-phon" id="wcPhon">/həˈloʊ/  ·  嗨喽</div><div class="wc-hint">👆 点击翻卡看意思</div></div>
+<div class="wc-face wc-back"><div class="wc-meaning" id="wcMeaning">你好</div><div class="wc-example" id="wcExample">Say hello to your friend.</div></div>
+</div></div>
+
+<!-- 朗读+跟读按钮 -->
+<div style="padding:0 16px">
+<div class="wc-actions">
+<button class="wc-act wc-speak" onclick="speakWord()">🔊 朗读发音</button>
+<button class="wc-act wc-follow" id="followBtn" onclick="startFollow()">🎤 跟读打分</button>
+</div>
+<div class="wc-feedback" id="wcFeedback"></div>
+</div>
+
+<!-- 翻页 -->
+<div class="word-nav">
+<button class="wnav-btn" onclick="prevWord()">‹</button>
+<div class="wnav-pos"><b id="wordPos">1</b> / 10</div>
+<button class="wnav-btn" onclick="nextWord()">›</button>
+</div>
+
+<!-- 操作栏 -->
+<div style="display:flex;gap:10px;padding:0 16px;margin-bottom:16px">
+<button class="copy-btn" style="flex:1;justify-content:center;background:var(--acc)" onclick="markWord('known')">✓ 学会了</button>
+<button class="copy-btn" style="flex:1;justify-content:center" onclick="markWord('unknown')">🔄 再练练</button>
+</div>
+
+<!-- 单词列表 -->
+<div class="section-title">📋 今日单词 · 10个生活高频词</div>
+<div id="wordList"></div>
+
+<!-- 计时器 -->
+<div class="eng-timer">
+<div><div class="timer-d" id="timerD">30:00</div><div class="timer-l">每日学习计时</div></div>
+<button class="timer-btn" id="timerBtn" onclick="togTimer()">开始计时</button>
+</div>
+<div class="hint-box">💡 零基础也能学会！每天10个生活常用词→<strong>点🔊听发音</strong>→<strong>点🎤跟读</strong>→标记学会。周末自动复习错词。</div>
+</div>
+
+<!-- ===== Weekly Report ===== -->
+<div class="weekly-overlay" id="weeklyOverlay"><div class="weekly-panel">
+<div class="weekly-close" onclick="closeWeekly()">✕</div>
+<div class="weekly-title">📊 本周复盘报告</div>
+<div class="week-chart" id="weekChart"></div>
+<div class="week-stats" id="weekStats"></div>
+<div class="week-section"><h4>📝 内容创作</h4><p id="weeklyCreate"></p></div>
+<div class="week-section"><h4>💪 健身完成</h4><p id="weeklyFit"></p></div>
+<div class="week-section"><h4>📚 英语学习</h4><p id="weeklyEng"></p></div>
+<div class="week-section"><h4>💡 下周建议</h4><p id="weeklySuggest"></p></div>
+</div></div>
+
+<!-- ===== Bottom Nav ===== -->
+<div class="bottom-nav">
+<div class="nav-item on" onclick="swPage('today',this)"><div class="ni">📋</div><div class="nt">今日</div></div>
+<div class="nav-item" onclick="swPage('hot',this)"><div class="ni">🔥</div><div class="nt">爆款</div></div>
+<div class="nav-item" onclick="swPage('create',this)"><div class="ni">✨</div><div class="nt">创作</div></div>
+<div class="nav-item" onclick="swPage('fit',this)"><div class="ni">💪</div><div class="nt">健身</div></div>
+<div class="nav-item" onclick="swPage('biz',this)"><div class="ni">💰</div><div class="nt">商机</div></div>
+<div class="nav-item" onclick="swPage('eng',this)"><div class="ni">📚</div><div class="nt">英语</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Data =====
+var WORD_GROUPS=[
+[// 第1组：社交&日常
+{w:'Hello',p:'/həˈloʊ/ · 嗨喽',c:'你好',e:'Say hello to your friend.',cn:'跟朋友说你好。'},
+{w:'Thank you',p:'/θæŋk juː/ · 三克油',c:'谢谢',e:'Thank you for your help.',cn:'谢谢你的帮忙。'},
+{w:'Sorry',p:'/ˈsɒri/ · 骚瑞',c:'对不起',e:'I\'m sorry, I am late.',cn:'对不起，我迟到了。'},
+{w:'Water',p:'/ˈwɔːtər/ · 喔特儿',c:'水',e:'Can I have some water?',cn:'能给我点水吗？'},
+{w:'Eat',p:'/iːt/ · 伊特',c:'吃',e:'I want to eat lunch.',cn:'我想吃午饭。'},
+{w:'Good',p:'/ɡʊd/ · 固德',c:'好的；很棒',e:'Have a good day!',cn:'祝你今天开心！'},
+{w:'Friend',p:'/frend/ · 福润德',c:'朋友',e:'She is my best friend.',cn:'她是我最好的朋友。'},
+{w:'Home',p:'/hoʊm/ · 厚姆',c:'家',e:'I am going home now.',cn:'我现在回家。'},
+{w:'Love',p:'/lʌv/ · 辣舞',c:'爱；喜欢',e:'I love this song.',cn:'我喜欢这首歌。'},
+{w:'Happy',p:'/ˈhæpi/ · 嗨皮',c:'开心的',e:'You look happy today.',cn:'你今天看起来很开心。'}
+],
+[// 第2组：问答&动作
+{w:'Yes',p:'/jes/ · 叶斯',c:'是的',e:'Yes, I can help you.',cn:'是的，我可以帮你。'},
+{w:'No',p:'/noʊ/ · 呢欧',c:'不；不是',e:'No, thank you.',cn:'不用了，谢谢。'},
+{w:'Please',p:'/pliːz/ · 普利兹',c:'请',e:'Please sit down.',cn:'请坐下。'},
+{w:'Help',p:'/help/ · 嗨欧普',c:'帮助',e:'Can you help me?',cn:'你能帮我吗？'},
+{w:'Go',p:'/ɡoʊ/ · 够',c:'去；走',e:'Let\'s go to the park.',cn:'我们去公园吧。'},
+{w:'Come',p:'/kʌm/ · 卡姆',c:'来',e:'Come here, please.',cn:'请过来一下。'},
+{w:'See',p:'/siː/ · 西',c:'看见',e:'See you tomorrow!',cn:'明天见！'},
+{w:'Time',p:'/taɪm/ · 太姆',c:'时间',e:'What time is it?',cn:'现在几点了？'},
+{w:'Day',p:'/deɪ/ · 嘚',c:'天；日子',e:'It is a nice day.',cn:'今天天气真好。'},
+{w:'Night',p:'/naɪt/ · 奈特',c:'夜晚',e:'Good night, sweet dreams.',cn:'晚安，做个好梦。'}
+],
+[// 第3组：描述&生活
+{w:'Big',p:'/bɪɡ/ · 比格',c:'大的',e:'This room is very big.',cn:'这个房间很大。'},
+{w:'Small',p:'/smɔːl/ · 斯莫欧',c:'小的',e:'The bag is small.',cn:'这个包很小。'},
+{w:'Hot',p:'/hɒt/ · 浩特',c:'热的；辣的',e:'The soup is hot.',cn:'汤很烫。'},
+{w:'Cold',p:'/koʊld/ · 扣德',c:'冷的',e:'I want a cold drink.',cn:'我想要一杯冷饮。'},
+{w:'New',p:'/njuː/ · 牛',c:'新的',e:'I got a new phone.',cn:'我买了新手机。'},
+{w:'Old',p:'/oʊld/ · 欧德',c:'老的；旧的',e:'This house is old.',cn:'这房子很老。'},
+{w:'Money',p:'/ˈmʌni/ · 马尼',c:'钱',e:'I need some money.',cn:'我需要一些钱。'},
+{w:'Food',p:'/fuːd/ · 福的',c:'食物',e:'The food is delicious.',cn:'这食物很好吃。'},
+{w:'Work',p:'/wɜːrk/ · 沃克',c:'工作',e:'I go to work at eight.',cn:'我八点去上班。'},
+{w:'Play',p:'/pleɪ/ · 普雷',c:'玩',e:'Let\'s play together.',cn:'我们一起玩吧。'}
+]
+];
+function getWordGroup(){var d=Math.floor(Date.now()/86400000);return WORD_GROUPS[d%3];}
+var WORDS=getWordGroup();
+
+// ===== Creation Data (2 sets, daily rotation) =====
+var CREATE_GROUPS=[
+[// Set 1: 户外&运动系
+{img:'images/A_beautiful_Chinese_woman_in_h_2026-07-27T06-35-47.png',link:'https://www.douyin.com/search/骑马拍照',grad:'',gtext:'',type:'ct-photo',icon:'📷 照片',title:'骑马场随手拍 · 阳光下的飒爽',desc:'趁天气好去<strong>马场</strong>，穿修身骑行裤+白衬衫，让朋友帮忙拍骑马侧面剪影。<strong>关键</strong>：侧逆光拍摄，马匹运动中抓拍，突出飒爽身姿。松弛感+力量感的完美结合。',detail:[{l:'场景',v:'马场/草地，下午3-5点斜阳光'},{l:'穿搭',v:'黑色骑行裤+白衬衫+马靴，头发扎低马尾'},{l:'排版',v:'3图：骑马侧面+牵马背影+马靴特写，竖版拼图'},{l:'文案',v:'"风从耳边吹过，马蹄声是最好的白噪音 🐎"'}]},
+{img:'images/A_stylish_Chinese_woman_in_her_2026-07-27T06-35-50.png',link:'https://www.douyin.com/search/台球女孩',grad:'',gtext:'',type:'ct-video',icon:'🎬 视频',title:'台球厅15秒 · 气质美女的另一面',desc:'在<strong>台球厅</strong>拍15秒短视频：俯身瞄准→出杆→球落袋→抬头微笑。不需要解说，配节奏感BGM。<strong>核心</strong>：展现专注和优雅反差，30+女性的多元魅力。',detail:[{l:'场景',v:'台球厅，暖色灯光氛围'},{l:'穿搭',v:'修身针织衫+高腰阔腿裤，简约耳饰'},{l:'镜头',v:'侧面拍俯身→正面拍出杆→特写球落袋→抬头微笑'},{l:'BGM',v:'《Snooker》节奏爵士 / 《Focus》轻电子'},{l:'文案',v:'"不只是漂亮，还有点帅 😎 #台球女孩"'}]},
+{img:'images/A_fit_Chinese_woman_in_her_30s_2026-07-27T06-35-51.png',link:'https://www.douyin.com/search/健身房运动女孩穿搭',grad:'',gtext:'',type:'ct-photo',icon:'📷 照片',title:'健身打卡照 · 运动女孩日常',desc:'今天有健身计划，拍<strong>对镜自拍</strong>或运动装备flat lay。穿运动bra+leggings展现健康线条。<strong>文案</strong>：「下班后的快乐是举铁给的」塑造爱运动的30+美女形象。',detail:[{l:'场景',v:'健身房更衣室/器械区对镜'},{l:'穿搭',v:'运动bra+leggings+小白鞋，高马尾'},{l:'排版',v:'2图：对镜自拍+器械旁侧拍，或flat lay装备摆放'},{l:'文案',v:'"下班后的快乐是举铁给的 💪 今天也是自律的一天"'}]},
+{img:'images/A_fashionable_Chinese_woman_in_2026-07-27T06-36-18.png',link:'https://www.douyin.com/hashtag/1592108843350023',grad:'',gtext:'',type:'ct-topic',icon:'📌 话题',title:'蹭热点 · #夏日复古风通勤穿搭',desc:'当前抖音热搜<strong>1184万热度</strong>。穿一套复古风通勤装（白衬衫+高腰阔腿裤+小皮鞋），通勤路上随手拍3张。突出成熟女性的松弛感与自信。',detail:[{l:'场景',v:'地铁站/写字楼门口/咖啡店'},{l:'穿搭',v:'白衬衫+高腰阔腿裤+小皮鞋+帆布包'},{l:'排版',v:'3图：走路抓拍+背影+咖啡馆坐着看手机'},{l:'文案',v:'"30+的通勤穿搭，舒服和好看我都要 😌"'}]},
+{img:'images/Flat_lay_photography_from_abov_2026-07-27T06-36-21.png',link:'https://www.douyin.com/search/夏日好物分享',grad:'',gtext:'',type:'ct-video',icon:'🎬 视频',title:'好物分享 · 夏日必备清凉好物',desc:'拍30秒<strong>桌面好物展示</strong>：冰垫、手持小风扇、高颜值水杯、防晒喷雾。每物展示3-5秒加文字标注。像跟闺蜜聊天一样自然。',detail:[{l:'场景',v:'家中桌面/阳台，自然光'},{l:'镜头',v:'俯拍桌面逐个展示好物，每个3-5秒+文字标注'},{l:'BGM',v:'《好心情》轻快女声 / 《Summer》清新风'},{l:'文案',v:'"夏天续命好物分享，第3个真的离不开了 🧊"'}]},
+{img:'images/Cozy_lifestyle_aesthetic_colla_2026-07-27T06-36-24.png',link:'https://www.douyin.com/search/松弛感日常碎片',grad:'',gtext:'',type:'ct-photo',icon:'📷 照片',title:'日常碎片 · 松弛感生活记录',desc:'随手拍3-4张今天的生活碎片：<strong>早餐、路边花、夕阳、一杯咖啡</strong>。不需要刻意摆拍，用「九宫格」或「拼图」形式发。文案走生活感悟路线。',detail:[{l:'场景',v:'日常生活场景，自然光'},{l:'排版',v:'4图拼图：早餐+花+夕阳+咖啡，统一暖色滤镜'},{l:'滤镜',v:'VSCO A6/J1 或醒图「复古胶片」'},{l:'文案',v:'"普通的一天，也有很多值得记录的小确幸 ☕"'}]}
+],
+[// Set 2: 生活&休闲系
+{img:'',link:'https://www.douyin.com/search/手冲咖啡教程',grad:'linear-gradient(135deg,#c99b7a,#b8865e)',gtext:'午后咖啡时刻 ☕',type:'ct-video',icon:'🎬 视频',title:'午后咖啡Vlog · 手冲咖啡仪式感',desc:'在家拍一段<strong>手冲咖啡</strong>全过程（20-30秒）：磨豆→注水→闷蒸→滴滤→成品。配轻音乐，不加解说。<strong>关键</strong>：俯拍+特写交叉，展现细腻质感。',detail:[{l:'场景',v:'家中厨房/阳台吧台，侧光或窗光'},{l:'镜头',v:'俯拍磨豆→特写水柱→慢动作滴滤→成品端杯'},{l:'BGM',v:'《Morning Coffee》爵士纯音 / 轻钢琴'},{l:'文案',v:'"一杯咖啡的时间，是属于我的仪式感 ☕"'}]},
+{img:'',link:'https://www.douyin.com/search/OOTD今日穿搭',grad:'linear-gradient(135deg,#b8a9c9,#a08db5)',gtext:'今日OOTD 👗',type:'ct-photo',icon:'📷 照片',title:'OOTD今日穿搭 · 简约不简单',desc:'对着<strong>全身镜</strong>拍今日穿搭：一条素色连衣裙+帆布鞋+帆布袋。构图干净，不要过多背景杂物。<strong>氛围</strong>：舒适自然的日常感，不刻意凹造型。',detail:[{l:'场景',v:'卧室全身镜前，自然光'},{l:'穿搭',v:'素色连衣裙+帆布鞋+帆布袋，简单饰品'},{l:'排版',v:'2图：正面对镜+侧身，标注穿搭品牌'},{l:'文案',v:'"简简单单也很好看，今天的自己很自在 🌿"'}]},
+{img:'',link:'https://www.douyin.com/search/我的解压方式',grad:'linear-gradient(135deg,#9bb5a3,#7d9e87)',gtext:'我的解压方式 💆‍♀️',type:'ct-topic',icon:'📌 话题',title:'蹭热点 · 我的解压方式合集',desc:'拍一段15秒快速剪辑：<strong>骑马片段+台球击球+健身瞬间</strong>，三场景混剪，展现你的多元生活。<strong>节奏</strong>：卡点快剪，每段2-3秒，配活力BGM。',detail:[{l:'素材',v:'手机里骑马/台球/健身的库存视频片段'},{l:'剪辑',v:'3段素材卡点混剪，每段2-3秒，共15秒'},{l:'BGM',v:'《Level Up》/《Stronger》节奏感'},{l:'文案',v:'"别人逛街我撸铁 🏋️‍♀️ 骑马台球 都是我解压的方式"'}]},
+{img:'',link:'https://www.douyin.com/search/周末市集逛拍',grad:'linear-gradient(135deg,#e8c59e,#d4ad84)',gtext:'周末市集 🛍️',type:'ct-photo',icon:'📷 照片',title:'周末市集逛拍 · 人间烟火气',desc:'周末去<strong>文创市集/菜市场</strong>，随手拍摊位、花草、手工艺品、美食。每张照片拍得有故事感。<strong>调色</strong>：暖黄色调，突出人间烟火气息。',detail:[{l:'场景',v:'文创市集/花市/菜市场，上午自然光'},{l:'穿搭',v:'宽松棉麻上衣+牛仔裤+草编包'},{l:'排版',v:'4-6图九宫格：摊位特写+手工艺品+食物+自拍'},{l:'文案',v:'"周末的快乐就是逛逛市集，买一束花回家 🌻"'}]},
+{img:'',link:'https://www.douyin.com/search/快速出门妆教程',grad:'linear-gradient(135deg,#d9b4c2,#c49aac)',gtext:'5分钟出门妆 💄',type:'ct-video',icon:'🎬 视频',title:'妆教15秒 · 5分钟快速出门妆',desc:'拍<strong>快速化妆过程</strong>：防晒→气垫→眉毛→口红，4步搞定。不需要解说，全程手机架拍，加速播放。<strong>要点</strong>：步骤清晰，产品标注文字。',detail:[{l:'场景',v:'梳妆台/窗边，正面自然光'},{l:'镜头',v:'手机支架固定俯拍，加速播放4步过程'},{l:'BGM',v:'轻快韩系女声 / 《Daylight》'},{l:'文案',v:'"5分钟出门妆，懒人必备 早上多睡半小时 😴"'}]},
+{img:'',link:'https://www.douyin.com/search/夏日傍晚散步',grad:'linear-gradient(135deg,#d4ae7c,#c0986a)',gtext:'傍晚散步 🌆',type:'ct-photo',icon:'📷 照片',title:'夏日傍晚散步 · 捕捉金色时刻',desc:'傍晚6-7点出门散步，<strong>金色时刻</strong>下随手拍街景、树影、天边的晚霞。穿一条飘逸长裙，让朋友帮忙拍背影。<strong>感觉</strong>：松弛、自由、浪漫。',detail:[{l:'场景',v:'街边/公园/河边，傍晚6-7点金色阳光'},{l:'穿搭',v:'飘逸长裙+凉鞋+草帽，头发自然散落'},{l:'排版',v:'3图：街景+背影+晚霞，暖色滤镜'},{l:'文案',v:'"一天中最喜欢的时刻 就是傍晚的散步 🚶‍♀️🌇"'}]}
+]
+];
+function getCreateGroup(){var d=Math.floor(Date.now()/86400000);return CREATE_GROUPS[d%2];}
+
+function renderCreate(){
+var items=getCreateGroup();
+var html=items.map(function(c){
+var visual;
+if(c.img){visual='<img src="'+c.img+'" alt="示意">';}
+else{visual='<div class="create-grad" style="background:'+c.grad+'">'+c.gtext+'</div>';}
+var detHtml=c.detail.map(function(d){return '<div class="cd-row"><div class="cd-lbl">'+d.l+'</div><div class="cd-val">'+d.v+'</div></div>';}).join('');
+return '<div class="create-card"><div class="create-visual">'+visual+'<a href="'+c.link+'" target="_blank" class="vs-play">▶ 参考视频</a></div><div class="create-top"><span class="create-type '+c.type+'">'+c.icon+'</span><div class="create-title">'+c.title+'</div><div class="create-desc">'+c.desc+'</div></div><div class="create-detail">'+detHtml+'</div></div>';
+}).join('');
+document.getElementById('createList').innerHTML=html;
+}
+
+var FIT_PLAN={
+1:{name:'上肢力量日',sub:'胸 · 肩 · 三头肌 · 约50分钟',ex:[
+{n:'哑铃卧推',e:'哑铃+卧推凳',s:'4组x12次',t:'<strong>要点</strong>：肩胛骨收紧贴凳，下放至胸部两侧，推起时呼气。避免腰部过度反弓。'},
+{n:'坐姿哑铃推举',e:'哑铃+健身椅',s:'4组x12次',t:'<strong>要点</strong>：背贴椅背，哑铃从肩部推至头顶。避免锁死肘关节。'},
+{n:'哑铃侧平举',e:'哑铃',s:'3组x15次',t:'<strong>要点</strong>：微屈肘，从体侧抬至肩高。不要耸肩，控制下落速度。'},
+{n:'绳索下压',e:'龙门架绳索',s:'3组x12次',t:'<strong>要点</strong>：大臂夹紧不动，小臂下压。避免身体前倾借力。'},
+{n:'哑铃飞鸟',e:'哑铃+卧推凳',s:'3组x12次',t:'<strong>要点</strong>：微屈肘像抱大树，感受胸部拉伸。重量不宜过大。'},
+{n:'拉伸放松',e:'瑜伽垫',s:'10分钟',t:'<strong>要点</strong>：胸肌、肩部、三头肌各拉伸30秒，缓慢深呼吸。'}
+]},
+3:{name:'下肢力量日',sub:'臀 · 腿 · 约50分钟',ex:[
+{n:'杠铃深蹲',e:'杠铃+深蹲架',s:'4组x10次',t:'<strong>要点</strong>：脚尖微外八，膝盖跟脚尖方向一致，臀部先向后坐。避免膝盖内扣。'},
+{n:'罗马尼亚硬拉',e:'杠铃',s:'4组x12次',t:'<strong>要点</strong>：微屈膝，臀部后推感受大腿后侧拉伸。保持背部平直，不要弓腰。'},
+{n:'臀桥',e:'杠铃+瑜伽垫',s:'3组x15次',t:'<strong>要点</strong>：仰卧屈膝，臀部发力顶起至身体成直线。顶峰收缩2秒。'},
+{n:'腿弯举',e:'腿弯举机',s:'3组x12次',t:'<strong>要点</strong>：俯卧机上，大腿后侧发力弯举。控制下放速度，避免惯性。'},
+{n:'弓步走',e:'哑铃',s:'3组x20步',t:'<strong>要点</strong>：持哑铃迈大步，前膝不超脚尖，后膝接近地面。保持上身直立。'}
+]},
+5:{name:'核心+背部日',sub:'核心 · 背部 · 有氧 · 约55分钟',ex:[
+{n:'高位下拉',e:'高位下拉机',s:'4组x12次',t:'<strong>要点</strong>：宽握杠，肩胛骨下沉后拉至胸部上方。避免身体过度后仰借力。'},
+{n:'坐姿划船',e:'划船机',s:'4组x12次',t:'<strong>要点</strong>：坐直挺胸，拉至腹部，肩胛骨后缩。回放时控制拉伸背部。'},
+{n:'平板支撑',e:'瑜伽垫',s:'3组x45秒',t:'<strong>要点</strong>：前臂支撑，身体成一条线。收紧核心，不要塌腰或翘臀。'},
+{n:'悬垂举腿',e:'单杠',s:'3组x12次',t:'<strong>要点</strong>：悬挂于单杠，腹部发力抬腿至水平。避免摆动借力，控制下落。'},
+{n:'椭圆机/跑步机',e:'有氧器械',s:'20分钟',t:'<strong>要点</strong>：中等强度，心率保持在130-150。结束后慢走3分钟放松。'}
+]}
+};
+var CHECK_ITEMS=[
+{id:'hot',t:'查看今日爆款视频',d:'浏览各平台热门内容，获取创作灵感'},
+{id:'create',t:'完成今日二创内容',d:'按建议拍摄照片或视频并发布'},
+{id:'fit',t:'完成今日健身训练',d:'按计划完成健身房训练（休息日自动跳过）'},
+{id:'biz',t:'浏览今日商机资讯',d:'查看赚钱信息和爆品推荐'},
+{id:'eng',t:'学会10个英语单词',d:'听发音+跟读+标记掌握，每日零基础学习'}
+];
+
+// ===== State =====
+var today=new Date();
+var todayKey=fmtDate(today);
+var wordIdx=0;
+var timerInt=null,timerSec=30*60;
+
+// ===== Utils =====
+function fmtDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function lsGet(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
+function getDayOfWeek(){return today.getDay()} // 0=Sun,1=Mon...
+
+// ===== Init =====
+function init(){
+var days=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+var h=today.getHours();
+var greet=h<11?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';
+document.getElementById('greetTitle').textContent=greet;
+var subs=['今天也要闪闪发光 ✨','又是元气满满的一天','保持热爱，奔赴山海','今天也要好好生活呀','你值得所有美好的事物'];
+document.getElementById('greetSub').textContent=subs[Math.floor(Math.random()*subs.length)];
+document.getElementById('appbarDate').textContent=today.getMonth()+1+'月'+today.getDate()+'日 '+days[getDayOfWeek()];
+renderChecklist();
+renderStreak();
+renderFitWeek();
+renderFitToday();
+renderWords();
+renderCreate();
+renderHot();
+renderBiz();
+updateWeekRate();
+if(getDayOfWeek()===0)document.getElementById('weeklyReportCard').style.display='block';
+}
+
+// ===== Page Switch =====
+function swPage(name,el){
+document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+document.getElementById('page-'+name).classList.add('active');
+document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('on')});
+el.classList.add('on');
+window.scrollTo(0,0);
+}
+
+// ===== Platform Tabs =====
+function swPlat(e,name){
+document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('on')});
+e.target.classList.add('on');
+['douyin','xhs','bili','video'].forEach(function(p){document.getElementById('plat-'+p).style.display=p===name?'block':'none'});
+}
+
+// ===== Analysis Toggle =====
+function togAna(el){
+var a=el.nextElementSibling;var arr=el.querySelector('.arr');
+if(a.classList.contains('show')){a.classList.remove('show');arr.classList.remove('up');el.firstChild.textContent='查看创作分析 '}
+else{a.classList.add('show');arr.classList.add('up');el.firstChild.textContent='收起分析 '}
+}
+
+// ===== Checklist =====
+function renderChecklist(){
+var checks=lsGet('checks_'+todayKey,{});
+var isFitDay=[1,3,5].includes(getDayOfWeek());
+var items=CHECK_ITEMS.filter(function(i){return i.id!=='fit'||isFitDay});
+document.getElementById('todayTotal').textContent=items.length;
+var done=0;
+var html=items.map(function(i){
+var on=checks[i.id];
+if(on)done++;
+return '<div class="ci'+(on?' ci-done':'')+'"><div class="ck'+(on?' on':'')+'" onclick="toggleCheck(\''+i.id+'\')"></div><div class="ci-txt"><div class="ci-t">'+i.t+'</div><div class="ci-d">'+i.d+'</div></div></div>';
+}).join('');
+document.getElementById('checklist').innerHTML=html;
+document.getElementById('todayDone').textContent=done;
+document.getElementById('checkProgress').textContent=done+'/'+items.length;
+}
+function toggleCheck(id){
+var checks=lsGet('checks_'+todayKey,{});
+checks[id]=!checks[id];
+lsSet('checks_'+todayKey,checks);
+renderChecklist();
+updateWeekRate();
+renderStreak();
+showToast(checks[id]?'打卡成功！':'已取消');
+}
+
+// ===== Streak =====
+function renderStreak(){
+var streak=0;var d=new Date(today);
+while(true){
+var k='checks_'+fmtDate(d);
+var c=lsGet(k,{});
+var total=Object.keys(CHECK_ITEMS).length;
+if(Object.values(c).filter(Boolean).length>0){streak++;d.setDate(d.getDate()-1)}
+else break;
+}
+document.getElementById('streakBadge').textContent='🔥 '+streak+'天';
+}
+
+// ===== Hot Video Data + Render (2 sets, daily rotation) =====
+var HOT_GROUPS=[{douyin:[
+{t:'夏日复古风通勤穿搭来啦',tu:'https://www.douyin.com/search/夏日复古风通勤穿搭',vu:'https://www.douyin.com/hashtag/1592108843350023',h:'🔥 1184万',c:'生活穿搭',a:[['构图思路','半身侧拍，背景选纯色墙面或地铁站，人物占画面2/3。手机竖拍突出穿搭整体感。'],['镜头参考','固定机位走动拍摄，3秒一个look快速切换场景。结尾加回头微笑特写。'],['热门文案','"30+的通勤穿搭，舒服和好看我都要 😌"'],['适配BGM','《Summer Vibe》轻快复古风 / 《周末愉快》松弛感钢琴'],['话题标签','#夏日穿搭 #通勤ootd #30岁穿搭 #松弛感']]},
+{t:'古早森系穿搭是氛围感的神',tu:'https://www.douyin.com/search/古早森系穿搭氛围感',vu:'https://www.douyin.com/search/森系穿搭',h:'🔥 771万',c:'穿搭美学',a:[['构图思路','绿植/公园/咖啡馆背景，穿浅色棉麻裙，拍全身+半身各一组。自然光是关键。'],['镜头参考','手机低角度仰拍拉长比例，逆光拍发丝光。加柔光滤镜增氛围感。'],['热门文案','"森系的浪漫，是风吹过裙摆的声音 🌿"'],['适配BGM','《风居住的街道》日系治愈 / 《Misty》氛围感钢琴'],['话题标签','#森系穿搭 #氛围感 #古早风 #夏日出游']]},
+{t:'谁还没跳ACAI拖拉机舞',tu:'https://www.douyin.com/search/ACAI拖拉机舞',vu:'https://www.douyin.com/search/拖拉机舞挑战',h:'🔥 777万',c:'舞蹈挑战',a:[['构图思路','全身入镜，背景简洁。穿运动休闲装突出舞蹈动作。'],['镜头参考','手机固定三脚架正面拍全身，15秒挑战版。跟节拍跳即可。'],['热门文案','"30+姐姐也来凑热闹，跳得不好但开心就好 😆"'],['适配BGM','原曲ACAI - 拖拉机舞原版BGM'],['话题标签','#拖拉机舞 #ACAI挑战 #全民跳舞']]},
+{t:'盘点各大奶茶店镇店爆款产品',tu:'https://www.douyin.com/search/奶茶店镇店爆款',vu:'https://www.douyin.com/search/奶茶测评',h:'🔥 764万',c:'美食探店',a:[['构图思路','俯拍桌面摆满奶茶flat lay，或手持对镜自拍。暖色系色调统一。'],['镜头参考','快速切换不同奶茶店画面每家3秒，结尾做推荐排名。'],['热门文案','"夏天没有奶茶是不完整的，这几杯封神了 🧋"'],['适配BGM','《好心情》轻快女声 / 《Sugar》甜系伴奏'],['话题标签','#奶茶测评 #夏日饮品 #美食探店']]},
+{t:'垫底辣孩飞机化妆回归',tu:'https://www.douyin.com/search/垫底辣孩化妆',vu:'https://www.douyin.com/search/化妆前后对比',h:'🔥 764万',c:'美妆颜值',a:[['构图思路','素颜到妆后对比分屏。自然光下拍摄，光线充足。'],['镜头参考','前置自拍，素颜3秒转场后妆后5秒。'],['热门文案','"化妆前vs化妆后，判若两人 💄"'],['适配BGM','《变身》节奏转场曲 / 《Glamorous》时尚风'],['话题标签','#化妆前后 #颜值变身 #美妆教程']]},
+{t:'我在草原上信号不太好',tu:'https://www.douyin.com/search/草原信号不好',vu:'https://www.douyin.com/search/草原生活随拍',h:'🔥 770万',c:'生活随拍',a:[['构图思路','大场景草原+小人物构图，穿白色或浅色衣服。手机广角模式。'],['镜头参考','手机横扫大场景，再切人物背影特写。慢动作走路加电影感。'],['热门文案','"逃离城市，在草原上做个没有信号的小孩 🌾"'],['适配BGM','《自由飞翔》空灵风 / 《草原之歌》民谣吉他'],['话题标签','#草原 #逃离城市 #生活随拍']]}],
+xhs:[
+{t:'夏日清凉穿搭 | 30+女生的松弛感',tu:'',vu:'',h:'📈 热度飙升',c:'穿搭',a:[['构图思路','竖版3:4构图，简约背景。穿搭+道具（咖啡杯/花束）增生活感。'],['镜头参考','拍3-5张换pose照片拼图：正面、侧身、背影、特写各一张。'],['热门文案','"30+的松弛感穿搭 | 不费力也很美 🤍"'],['适配BGM','《Sunday Morning》轻柔英文 / 《夏日柠檬》日系清新'],['话题标签','#30岁穿搭 #松弛感穿搭 #夏日ootd']]},
+{t:'随手拍的家 | 租房也要好好生活',tu:'',vu:'',h:'📈 爆款笔记',c:'家居',a:[['构图思路','拍家里一角：窗台+绿植、书架+香薰、餐桌+花瓶。暖色调温馨感。'],['镜头参考','拍4-6张角落照片拼宫格，暖色滤镜，标注每处"幸福感来源"。'],['热门文案','"房子是租的但生活不是 🏠 每一寸都是用心布置的"'],['适配BGM','《Home》温暖民谣 / 《小幸运》纯音乐版'],['话题标签','#独居生活 #租房改造 #家的样子']]},
+{t:'夏日饮品DIY | 3步搞定高颜值冰饮',tu:'',vu:'',h:'📈 热门种草',c:'美食',a:[['构图思路','俯拍制作过程桌面，材料整齐摆放。成品杯放窗边自然光下拍特写。'],['镜头参考','拍3步制作过程每步5秒，倒杯慢动作+冰块掉落特写。15-20秒。'],['热门文案','"夏天必做！3步搞定ins风冰饮 🥤"'],['适配BGM','《Lemonade》清爽夏日 / 《Ice Cream》甜系节奏'],['话题标签','#夏日饮品 #DIY饮品 #高颜值饮品']]},
+{t:'运动穿搭分享 | 健身房也要好看',tu:'',vu:'',h:'📈 互动高',c:'运动',a:[['构图思路','健身房对镜自拍+器械前pose。运动bra+leggings展现健康线条。'],['镜头参考','对镜自拍3张不同动作+器械旁侧拍2张，拼图标注穿搭品牌。'],['热门文案','"健身房也是我的秀场 💪 运动女孩穿搭分享"'],['适配BGM','《Stronger》节奏感 / 《Level Up》运动风'],['话题标签','#运动穿搭 #健身房穿搭 #运动女孩']]}],
+bili:[
+{t:'2026下半年值得期待的10部电影',tu:'',vu:'',h:'🔥 全站热门',c:'影视',a:[['构图思路','图文版电影清单配海报拼图，或拍观影vlog反应。'],['镜头参考','手机拍影院/客厅观影场景，加电影截图拼贴。'],['热门文案','"下半年片单来了！这些电影不允许你错过 🎬"'],['适配BGM','电影原声混剪 / 《Cinema》影视配乐'],['话题标签','#电影推荐 #2026片单 #影视杂谈']]},
+{t:'一个人住的第100天 | 治愈系Vlog',tu:'',vu:'',h:'🔥 百万播放',c:'生活',a:[['构图思路','日常碎片：起床、做饭、看书、散步。每画面5-8秒慢节奏治愈风。'],['镜头参考','手机随手拍一天5-6个场景，固定或手持。后期加字幕和时间线。'],['热门文案','"独居第100天，和自己相处很治愈 🌙"'],['适配BGM','《River Flows in You》钢琴 / 《晚安》治愈系'],['话题标签','#独居vlog #治愈系 #一个人的生活']]},
+{t:'手机拍出大片感 | 构图教程',tu:'',vu:'',h:'🔥 知识区',c:'摄影',a:[['构图思路','分享三分法、对称构图、引导线构图。每构图拍示例照片对比。'],['镜头参考','拍构图前后对比照，标注构图线。图文笔记形式。'],['热门文案','"手机也能拍大片！3个构图技巧秒变摄影师 📸"'],['适配BGM','轻快纯音乐 / 无BGM纯讲解'],['话题标签','#手机摄影 #构图教程 #摄影技巧']]}],
+video:[
+{t:'30岁后的生活感悟 | 活成自己想要的样子',tu:'',vu:'',h:'🔥 朋友圈刷屏',c:'感悟',a:[['构图思路','日常生活碎片+文字旁白：喝茶、看书、散步、做菜。温暖治愈色调。'],['镜头参考','拍5-8个生活场景碎片每段3-5秒，配自己旁白声音。'],['热门文案','"30岁后才明白：人生最好的状态是松弛且自洽"'],['适配BGM','《人世间》温暖纯音乐 / 《岁月神偷》金玟岐'],['话题标签','#30岁以后 #生活感悟 #女性成长 #松弛感']]},
+{t:'周末City Walk | 漫步城市发现美',tu:'',vu:'',h:'🔥 热门转发',c:'生活',a:[['构图思路','街拍+探店+风景混剪。穿舒适休闲装，随手拍沿途有趣画面。'],['镜头参考','手机边走边拍6-8个场景碎片，每个3秒。加位置标注和简短旁白。'],['热门文案','"城市漫游指南 | 周末就该这样浪费时光 🚶‍♀️"'],['适配BGM','《漫步》轻快民谣 / 《City of Stars》慵懒爵士'],['话题标签','#CityWalk #周末去哪 #城市漫步 #生活碎片']]}]
+},
+{// Set 2
+douyin:[
+{t:'独居女生的周末仪式感',tu:'https://www.douyin.com/search/独居女生周末',vu:'https://www.douyin.com/search/周末仪式感',h:'🔥 890万',c:'生活',a:[['构图思路','从早到晚时间线：早餐摆盘→整理房间→午后咖啡→傍晚瑜伽。自然光贯穿全片。'],['镜头参考','手机拍6个场景碎片，每段3秒快剪，结尾加字幕"一个人的周末也可以很精彩"。'],['热门文案','"独居女生的周末是这样的：咖啡、书、阳光和自己 ☀️"'],['适配BGM','《Lofi Hip Hop》治愈系 / 《Sunday》慵懒女声'],['话题标签','#独居女生 #周末日常 #一个人也要好好生活']]},
+{t:'防晒霜真实测评 | 户外暴汗实测',tu:'https://www.douyin.com/search/防晒霜测评',vu:'https://www.douyin.com/search/防晒霜推荐2024',h:'🔥 682万',c:'美妆',a:[['构图思路','户外实拍场景：手臂分区域涂不同品牌防晒，运动后对比。真实无滤镜。'],['镜头参考','手机拍手臂涂防晒→户外活动→出汗后特写对比，加产品名称标注。'],['热门文案','"暴汗2小时，这5款防晒谁扛住了？结果出乎意料 🧴"'],['适配BGM','轻松节奏感 / 无BGM真实环境声'],['话题标签','#防晒测评 #夏日防晒 #真实测评']]},
+{t:'30岁开始学一门新技能不晚',tu:'https://www.douyin.com/search/30岁学新技能',vu:'https://www.douyin.com/search/成人学英语',h:'🔥 610万',c:'成长',a:[['构图思路','第一人称学习视角：桌上书+笔记+电脑，拍学习过程碎片。'],['镜头参考','手机拍学习过程时间线：早上背单词→午休练习→晚上复习。加文字进度条。'],['热门文案','"30岁学英语，今天打卡第15天 年龄从来不是限制 📚"'],['适配BGM','《Dream It Possible》励志 / 柔和钢琴'],['话题标签','#终身学习 #30岁 #学英语 #自律生活']]},
+{t:'姐妹聚会拍照pose大全',tu:'https://www.douyin.com/search/姐妹合照pose',vu:'https://www.douyin.com/search/闺蜜拍照姿势',h:'🔥 588万',c:'拍照',a:[['构图思路','选咖啡厅或户外草地，4-5个pose：靠肩、背后抱、举杯、边走边聊。自然不做作。'],['镜头参考','手机支架或朋友帮忙拍，一个pose一张图拼9宫格。加场地标签。'],['热门文案','"和姐妹聚会必须安排这些pose，出片率100% 👯‍♀️"'],['适配BGM','《Girls》活力女声 / 《We Are Young》'],['话题标签','#闺蜜照 #拍照姿势 #姐妹聚会 #出片技巧']]},
+{t:'冰淇淋探店TOP5 | 夏天必吃',tu:'https://www.douyin.com/search/冰淇淋探店',vu:'https://www.douyin.com/search/夏日冰淇淋推荐',h:'🔥 545万',c:'美食',a:[['构图思路','每家店手持冰淇淋对着店面/街景拍，突出颜色和质感。暖阳下拍有食欲。'],['镜头参考','手机手持边走边吃，每店5秒，结尾排名截图。'],['热门文案','"暴走5家店，选出这个夏天最值得吃的冰淇淋TOP5 🍦"'],['适配BGM','《Sugar》甜系 / 轻快夏日BGM'],['话题标签','#冰淇淋测评 #夏日美食 #探店打卡']]},
+{t:'通勤路上的风景 | 上班也能发现美',tu:'https://www.douyin.com/search/通勤随拍',vu:'https://www.douyin.com/search/上班路上风景',h:'🔥 512万',c:'随拍',a:[['构图思路','通勤路上随手拍：地铁窗外、路边花、建筑光影、天空。不加滤镜的真实感。'],['镜头参考','等红绿灯拍天空→地铁站拍光影→办公室拍窗外，3个场景快剪。'],['热门文案','"通勤路上低头刷手机，差点错过了这些风景 🌤️"'],['适配BGM','《Ordinary Day》治愈民谣 / 《Home》温暖'],['话题标签','#通勤日常 #上班路上 #生活碎片 #治愈系']]}],
+xhs:[
+{t:'一周穿搭不重样 | 7天look合集',tu:'',vu:'',h:'📈 新晋爆款',c:'穿搭',a:[['构图思路','7天每天拍一张全身穿搭，统一背景（白墙/全身镜），拼成一张长图。'],['镜头参考','每天固定机位拍一张全身照，周末拼成7宫格。标注每天场合。'],['热门文案','"一周穿搭记录 | 每天穿出不一样的心情 👗"'],['适配BGM','轻快韩系 / 《Weekend》女声'],['话题标签','#一周穿搭 #OOTD #穿搭合集 #日常穿搭']]},
+{t:'书桌布置ins风 | 提高学习效率',tu:'',vu:'',h:'📈 家居热门',c:'家居',a:[['构图思路','俯拍整个书桌，展示布置元素：台灯、便签板、绿植、文具收纳。暖色台灯光源。'],['镜头参考','拍3张：全景+台灯特写+工作状态，拼图展示前后对比。'],['热门文案','"把书桌布置成喜欢的样子，连学习都变得快乐了 📝"'],['适配BGM','《Study With Me》轻音乐 / 白噪音'],['话题标签','#书桌布置 #ins风书桌 #桌面改造']]},
+{t:'平价护肤好物推荐 | 百元内天花板',tu:'',vu:'',h:'📈 种草榜',c:'护肤',a:[['构图思路','产品flat lay摆放+上脸使用过程。白底背景，光线充足。'],['镜头参考','产品摆拍一张+使用前后对比一张，标注价格和效果。图文笔记。'],['热门文案','"百元内真的有好用的，这几款我会回购到停产 💆‍♀️"'],['适配BGM','无BGM / 轻快纯音乐'],['话题标签','#平价护肤 #好物推荐 #护肤心得']]},
+{t:'睡前5分钟放松 | 助眠小仪式',tu:'',vu:'',h:'📈 生活热门',c:'生活',a:[['构图思路','卧室柔光环境：点香薰→拉伸→看几页书→关灯。暖黄调治愈感。'],['镜头参考','手机拍4个动作每段3秒，快剪+柔光滤镜。'],['热门文案','"睡前的5分钟，决定第二天的状态 🌙 我的助眠小仪式"'],['适配BGM','《Weightless》助眠 / 自然白噪音'],['话题标签','#睡前仪式 #助眠 #自我照顾 #睡前routine']]}],
+bili:[
+{t:'副业从0到1 | 我的真实记录',tu:'',vu:'',h:'🔥 知识区',c:'职场',a:[['构图思路','屏幕录屏+实拍交叉：讲解副业思路时用录屏，日常工作用实拍。'],['镜头参考','开头自拍简述→中间录屏展示工具→结尾实拍成果。5-8分钟。'],['热门文案','"副业收入分享，从第一个月30元到现在，我做对了什么？"'],['适配BGM','柔和背景音乐 / 纯讲解'],['话题标签','#副业 #搞钱 #经验分享 #赚钱']]},
+{t:'极简生活挑战 | 30天不买新东西',tu:'',vu:'',h:'🔥 生活区',c:'生活',a:[['构图思路','Vlog形式记录30天：清理衣柜→少买东西→发现真正需要的。'],['镜头参考','每周拍一次总结，分享心态变化和花了多少钱。'],['热门文案','"30天极简挑战结束，我发现快乐真的不需要那么多东西"'],['适配BGM','《Minimal》简约钢琴 / 环境声'],['话题标签','#极简生活 #不买挑战 #消费降级']]},
+{t:'零基础学英语第30天 | 变化惊人',tu:'',vu:'',h:'🔥 学习区',c:'学习',a:[['构图思路','第一天vs第30天对比：读同一段英文展示进步。学习笔记和打卡记录展示。'],['镜头参考','手机拍学习桌面+自己朗读对比视频。加字幕和日期标注。'],['热门文案','"0基础学英语30天，每天30分钟，成果让我自己都惊讶 🇬🇧"'],['适配BGM','《A Thousand Years》钢琴版 / 励志纯音'],['话题标签','#学英语 #零基础 #学习打卡 #自律']]}],
+video:[
+{t:'陪爸妈过周末 | 最简单的幸福',tu:'',vu:'',h:'🔥 暖心分享',c:'亲情',a:[['构图思路','家庭日常生活：陪妈妈做饭、和爸爸下棋、一家人吃饭。真实不经意的温馨。'],['镜头参考','随手拍3-4个画面，不加过度剪辑。真情感人。'],['热门文案','"周末回家陪爸妈，吃一顿妈妈做的饭，比什么都幸福 🏠"'],['适配BGM','《时间都去哪儿了》/ 温馨钢琴'],['话题标签','#陪爸妈 #家的味道 #周末日常']]},
+{t:'早市里的烟火气 | 最治愈的清晨',tu:'',vu:'',h:'🔥 生活随拍',c:'生活',a:[['构图思路','早市摊位、新鲜蔬菜水果、热气腾腾的早餐摊。色彩丰富有生活气息。'],['镜头参考','边走边拍，每摊位2-3秒快剪，配轻快民谣。'],['热门文案','"清晨6点的菜市场，藏着最真实的烟火气 🌿"'],['适配BGM','《清晨》民谣吉他 / 轻快纯音乐'],['话题标签','#早市 #人间烟火 #生活随拍 #治愈']]}]
+}];
+
+function getHotGroup(){var d=Math.floor(Date.now()/86400000);return HOT_GROUPS[d%2];}
+
+var RANK_CSS=['t1','t2','t3','tn','tn','tn'];
+
+function buildHotItem(item,i){
+var aHtml=item.a.map(function(r){return '<div class="analyze-row"><div class="analyze-lbl">'+r[0]+'</div><div class="analyze-txt">'+r[1]+'</div></div>';}).join('');
+var titleHtml=item.tu?'<a href="'+item.tu+'" target="_blank">'+item.t+'</a>':item.t;
+var vidBtn=item.vu?'<a href="'+item.vu+'" target="_blank" class="hot-link">▶ 查看视频</a>':'';
+return '<div class="hot-item"><div class="hot-top"><div class="hot-rank '+RANK_CSS[i]+'">'+(i+1)+'</div><div class="hot-info"><div class="hot-title">'+titleHtml+'</div><div class="hot-meta"><span class="heat">'+item.h+'</span><span>'+item.c+'</span></div>'+vidBtn+'</div></div><div class="expand-btn" onclick="togAna(this)">查看创作分析 <span class="arr">▼</span></div><div class="hot-analysis">'+aHtml+'</div></div>';
+}
+
+function renderHot(){
+var g=getHotGroup();
+['douyin','xhs','bili','video'].forEach(function(k){
+document.getElementById('plat-'+k).innerHTML=g[k].map(buildHotItem).join('');
+});
+}
+
+// ===== Week Rate =====
+function updateWeekRate(){
+var weekStart=new Date(today);weekStart.setDate(today.getDate()-today.getDay());
+var total=0,done=0;
+for(var i=0;i<7;i++){
+var d=new Date(weekStart);d.setDate(weekStart.getDate()+i);
+var k='checks_'+fmtDate(d);var c=lsGet(k,{});
+var items=CHECK_ITEMS.filter(function(it){return it.id!=='fit'||[1,3,5].includes(d.getDay())});
+total+=items.length;done+=Object.values(c).filter(Boolean).length;
+}
+document.getElementById('weekRate').textContent=total>0?Math.round(done/total*100)+'%':'0%';
+}
+
+// ===== Fitness =====
+function renderFitWeek(){
+var days=[{n:'日',t:'休息'},{n:'一',t:'上肢'},{n:'二',t:'休息'},{n:'三',t:'下肢'},{n:'四',t:'休息'},{n:'五',t:'核心'},{n:'六',t:'休息'}];
+var dow=getDayOfWeek();
+var html=days.map(function(d,i){
+var cls=i===dow?'active':(d.t==='休息'?'rest':'');
+return '<div class="fit-day-dot '+cls+'"><div class="dn">'+d.n+'</div><div class="dt">'+d.t+'</div></div>';
+}).join('');
+document.getElementById('fitWeek').innerHTML=html;
+}
+function renderFitToday(){
+var dow=getDayOfWeek();
+var isFitDay=[1,3,5].includes(dow);
+if(!isFitDay){
+document.getElementById('fitTodayInfo').innerHTML='<div class="fit-day-label">📍 今日</div><div class="fit-day-name">休息日</div><div class="fit-day-sub">拉伸放松 · 散步30分钟 · 让身体恢复</div>';
+document.getElementById('fitExercises').innerHTML='<div class="hint-box">今天是休息日，好好放松！下次训练：<strong>'+(dow<1?'周一':dow<3?'周三':'周一')+'</strong></div>';
+return;
+}
+var plan=FIT_PLAN[dow];
+document.getElementById('fitTodayInfo').innerHTML='<div class="fit-day-label">📍 今日训练日 · 19:30提醒</div><div class="fit-day-name">'+plan.name+'</div><div class="fit-day-sub">'+plan.sub+'</div>';
+var html=plan.ex.map(function(ex,i){
+return '<div class="fit-ex"><div class="fit-ex-h" onclick="togFitEx(this)"><div class="fit-ex-num">'+(i+1)+'</div><div class="fit-ex-info"><div class="fit-ex-name">'+ex.n+'</div><div class="fit-ex-meta">'+ex.e+'</div></div><div class="fit-sets">'+ex.s+'</div><div class="fit-ex-arrow">›</div></div><div class="fit-ex-body"><div class="fit-tip">'+ex.t+'</div></div></div>';
+}).join('');
+document.getElementById('fitExercises').innerHTML=html;
+}
+function togFitEx(el){
+var body=el.nextElementSibling;var arr=el.querySelector('.fit-ex-arrow');
+if(body.classList.contains('show')){body.classList.remove('show');arr.classList.remove('open')}
+else{body.classList.add('show');arr.classList.add('open')}
+}
+
+// ===== Business Data =====
+var BIZ_DATA=[
+{
+title:'AI应用服务 · 帮商家生成内容',
+detail:'用ChatGPT/豆包等AI工具，帮电商卖家写产品文案（50-100元/篇），帮博主做封面设计（30-50元/个）。零成本启动，会打字就能做。',
+profit:'月入5k-1w',
+plan:['注册ChatGPT或豆包账号，花1天熟悉基础操作','在猪八戒网/淘宝服务市场/闲鱼开店铺，发布"AI文案代写""封面设计"服务','在抖音/小红书发案例，展示AI生成效果吸引客户','接单后在平台内交付，积累好评提高排名'],
+links:[
+{t:'豆包AI工具（免费起步）',u:'https://www.doubao.com'},
+{t:'猪八戒网接单平台',u:'https://www.zbj.com'},
+{t:'闲鱼发布服务教程搜索',u:'https://www.douyin.com/search/AI代写接单教程'}
+]
+},
+{
+title:'本地生活推广 · 帮实体店拍视频',
+detail:'为餐饮店/美发店拍推广短视频（200-500元/条），或做团购套餐分销按销售额提成约30%。抖音本地生活2026年从业者预计翻倍，入局正当时。',
+profit:'按单结算',
+plan:['挑选周边3-5家人气不错但抖音没做好的店铺（餐饮、美发、美容优先）','免费给其中1家拍一条样片，用效果说话','谈合作：拍摄费200-500元/条 或 按团购销售额提成','在抖音发布并挂店铺POI定位+团购链接，持续追踪数据'],
+links:[
+{t:'抖音本地生活入驻指南',u:'https://www.douyin.com/search/抖音本地生活服务商'},
+{t:'团购分销怎么做',u:'https://www.douyin.com/search/团购达人怎么做'}
+]
+},
+{
+title:'知识付费 · 生活技能变课程',
+detail:'将穿搭/化妆/美食技能整理成线上课程：穿搭指南99元、化妆教程199元。不需要顶级专家，比学习者多走一步即可。你的日常就是最好的教材。',
+profit:'卖100份近万元',
+plan:['选定你最擅长的1个技能方向（穿搭/化妆/台球入门等）','用手机录制5-10节视频课，每节8-15分钟，列出大纲','上传到千聊/小鹅通/知识星球，设置课程价格','在朋友圈和小红书发布免费试看片段引流，逐步积累学员'],
+links:[
+{t:'千聊知识付费平台',u:'https://www.qlchat.com'},
+{t:'小鹅通课程工具',u:'https://www.xiaoe-tech.com'},
+{t:'小红书搜索"知识付费入门"',u:'https://www.xiaohongshu.com/search_result?keyword=知识付费入门'}
+]
+},
+{
+title:'虚拟产品电商 · 零库存零物流',
+detail:'简历模板/PPT模板/行业资料包等数字产品，零库存无物流，2000元起步。闲鱼/淘宝/小红书出售，利润率极高，卖出去就是纯利润。',
+profit:'利润率90%+',
+plan:['用Canva/PPT设计10套精美模板（简历、PPT、周报等）','在闲鱼和淘宝开设店铺，设置自动发货（买家付款后自动发送下载链接）','优化商品标题和详情页，包含"模板预览图+适用场景"','在抖音/小红书发模板使用效果图引流到店铺'],
+links:[
+{t:'Canva在线设计工具',u:'https://www.canva.cn'},
+{t:'闲鱼开店指南',u:'https://www.douyin.com/search/闲鱼虚拟产品开店'},
+{t:'淘宝服务市场',u:'https://fuwu.taobao.com'}
+]
+},
+{
+title:'银发经济 · 老年人服务',
+detail:'围绕3亿老年群体：旅游陪伴（数千元/次）、健康管理咨询（200-300元/时）、老年大学课程（100-200元/节）、适老化改造（数千元/单）。需求大、竞争少。',
+profit:'市场规模5万亿+',
+plan:['确定1个服务方向（推荐：旅游陪伴或老年手机/APP教学）','在社区活动中心/公园发放免费体验券建立信任','和老邻居、长辈朋友圈口口相传获取首批客户','建立微信群持续维护关系，老客户转介绍新客户'],
+links:[
+{t:'银发经济发展报告',u:'https://www.douyin.com/search/银发经济创业机会'},
+{t:'老年旅游陪伴怎么做',u:'https://www.douyin.com/search/老年陪伴服务'}
+]
+},
+{
+title:'跨境电商 · 信息差套利',
+detail:'帮国内工厂对接海外采购（单笔赚数千元差价），或帮海外华人代购国内好物（部分商品可翻5倍）。需要供应链嗅觉和执行力，适合想做外贸的人。',
+profit:'单笔数千元',
+plan:['在1688/义乌购研究海外热门品类（家居、饰品、小家电）','注册TikTok Shop或Shopee卖家账号，上架选好的产品','联系3-5家1688工厂谈代发合作，拿到最低供货价','用TikTok拍产品展示短视频引流到店铺，测试哪个品好卖'],
+links:[
+{t:'1688货源平台',u:'https://www.1688.com'},
+{t:'TikTok Shop卖家中心',u:'https://seller.tiktokglobalshop.com'},
+{t:'Shopee跨境电商平台',u:'https://shopee.cn'}
+]
+},
+{
+title:'爆品追踪 · 夏日经济',
+detail:'当前各平台爆火产品：便携小风扇、高颜值冰霸杯、冰丝防晒衣、DIY冰饮材料包、露营装备。可做分销或找源头工厂代发，利用季节性热度赚快钱。',
+profit:'夏季旺季',
+plan:['每天花15分钟刷抖音/小红书热门商品榜，记录正在火的品类','在1688搜索同款，对比3-5家工厂价格和起批量','在闲鱼/拼多多/抖音小店上架，标题蹭热点关键词','出单后在1688下单让工厂直发客户（一件代发模式，零囤货）'],
+links:[
+{t:'抖音电商选品广场',u:'https://www.douyin.com/search/抖音选品广场'},
+{t:'1688一件代发教程',u:'https://www.douyin.com/search/1688一件代发'},
+{t:'拼多多开店入口',u:'https://mms.pinduoduo.com'}
+]
+},
+{
+title:'短视频搬运出海 · 流量变现',
+detail:'将国内火爆短视频翻译搬运到TikTok/YouTube获取流量收益。AI翻译工具大幅降低制作成本，信息差红利仍在。适合想做被动收入的创作者。',
+profit:'被动收入',
+plan:['注册TikTok和YouTube账号，确定搬运内容方向（美食/手工/宠物等不露脸的优先）','用剪映/度加剪辑下载国内热门视频，AI自动生成英文字幕','用AI语音工具给视频配上英文旁白，5分钟完成一条','每天发布1-2条，连续发30天测试流量，找到爆款方向后批量复制'],
+links:[
+{t:'剪映AI字幕工具',u:'https://www.capcut.cn'},
+{t:'TikTok创作者中心',u:'https://www.tiktok.com/creators'},
+{t:'YouTube创作者后台',u:'https://studio.youtube.com'}
+]
+}
+];
+
+// ===== Business Render =====
+function renderBiz(){
+var savedBiz=lsGet('savedBiz',{});
+var ds=Math.floor(Date.now()/86400000);
+var items=BIZ_DATA.map(function(b,oi){return {d:b,oi:oi};}).sort(function(){return (ds*9301+49297)%233280/233280-.5});
+var html=items.map(function(x,i){
+var b=x.d;var oi=x.oi;
+var isSaved=savedBiz[oi];
+var isSaved=savedBiz[i];
+var planHtml=b.plan.map(function(s,si){
+return '<div class="biz-step"><div class="biz-step-num">'+(si+1)+'</div><div class="biz-step-text">'+s+'</div></div>';
+}).join('');
+var linkHtml=b.links.map(function(l){
+return '<a class="biz-link" href="'+l.u+'" target="_blank"><span class="bl-icon">🔗</span>'+l.t+'</a>';
+}).join('');
+return '<div class="biz-item">'
++'<div class="biz-top"><div class="biz-num">'+(i+1)+'</div>'
++'<div class="biz-content"><div class="biz-title">'+b.title+'</div>'
++'<div class="biz-detail">'+b.detail+'</div>'
++'<div class="biz-bottom"><span class="biz-profit">'+b.profit+'</span>'
++'<button class="biz-save'+(isSaved?' saved':'')+'" onclick="togSave(this,'+oi+')">'+(isSaved?'已收藏':'收藏')+'</button></div>'
++'</div></div>'
++'<div class="biz-expand" onclick="togBiz(this)">查看行动方案 <span class="arr">▼</span></div>'
++'<div class="biz-plan"><div class="biz-plan-label">📋 可执行方案</div><div class="biz-steps">'+planHtml+'</div>'
++'<div class="biz-plan-label">🔗 参考链接</div><div class="biz-links">'+linkHtml+'</div>'
++'</div></div>';
+}).join('');
+document.getElementById('bizList').innerHTML=html;
+}
+
+function togBiz(el){
+var plan=el.nextElementSibling;var arr=el.querySelector('.arr');
+if(plan.classList.contains('show')){
+plan.classList.remove('show');arr.classList.remove('up');el.firstChild.textContent='查看行动方案 ';
+}else{
+plan.classList.add('show');arr.classList.add('up');el.firstChild.textContent='收起方案 ';
+}
+}
+
+// ===== Business Save =====
+function togSave(el,idx){
+var savedBiz=lsGet('savedBiz',{});
+if(el.classList.contains('saved')){
+el.classList.remove('saved');el.textContent='收藏';
+delete savedBiz[idx];showToast('已取消收藏');
+}else{
+el.classList.add('saved');el.textContent='已收藏';
+savedBiz[idx]=true;showToast('已收藏商机');
+}
+lsSet('savedBiz',savedBiz);
+}
+
+// ===== English Words =====
+var speechSynth=window.speechSynthesis;
+var recognition=null;
+var isListening=false;
+
+function togAlpha(){
+var b=document.getElementById('alphaBody');var a=document.getElementById('alphaArr');
+b.classList.toggle('show');a.classList.toggle('open');
+}
+
+function renderWords(){
+showWord(0);
+var html=WORDS.map(function(w,i){
+return '<div class="word-list-item"><div class="wli-word">'+w.w+'</div><div class="wli-meaning" style="font-size:14px;color:var(--t1)">'+w.c+'</div><div class="wli-status wli-unknown" id="wli-'+i+'">待学</div></div>';
+}).join('');
+document.getElementById('wordList').innerHTML=html;
+}
+
+function showWord(i){
+wordIdx=i;
+var w=WORDS[i];
+document.getElementById('wcNum').textContent='第 '+(i+1)+' / '+WORDS.length+' 个';
+document.getElementById('wcWord').textContent=w.w;
+document.getElementById('wcPhon').textContent=w.p;
+document.getElementById('wcMeaning').textContent=w.c;
+document.getElementById('wcExample').textContent=w.e+'  （'+w.cn+'）';
+document.getElementById('wordPos').textContent=i+1;
+document.getElementById('wordCard').classList.remove('flipped');
+document.getElementById('wcFeedback').textContent='';
+document.getElementById('wcFeedback').className='wc-feedback';
+stopFollow();
+}
+
+function speakWord(){
+if(speechSynth.speaking){speechSynth.cancel();return}
+var w=WORDS[wordIdx];
+var u=new SpeechSynthesisUtterance(w.w);
+u.lang='en-US';u.rate=0.75;u.pitch=1;
+var spk=document.querySelector('.wc-speak');spk.classList.add('on');
+u.onend=function(){spk.classList.remove('on')};
+speechSynth.speak(u);
+}
+
+function startFollow(){
+if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
+document.getElementById('wcFeedback').innerHTML='<span class="wc-fb-retry">⚠️ 浏览器不支持跟读，请用Chrome浏览器</span>';
+document.getElementById('wcFeedback').className='wc-feedback';
+return;
+}
+if(isListening){stopFollow();return}
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+recognition=new SR();
+recognition.lang='en-US';
+recognition.continuous=false;
+recognition.interimResults=false;
+recognition.maxAlternatives=3;
+
+var btn=document.getElementById('followBtn');
+btn.classList.add('on','listening');
+btn.innerHTML='🎤 正在听...';
+isListening=true;
+document.getElementById('wcFeedback').textContent='说单词吧...';
+document.getElementById('wcFeedback').className='wc-feedback';
+
+recognition.onresult=function(e){
+var said=e.results[0][0].transcript.trim().toLowerCase();
+var target=WORDS[wordIdx].w.toLowerCase();
+var alts=[];
+for(var j=0;j<e.results[0].length;j++)alts.push(e.results[0][j].transcript.trim().toLowerCase());
+var bestMatch=alts.indexOf(target);
+var similarity=stringSimilarity(said,target);
+
+if(bestMatch>=0 || similarity>0.7){
+document.getElementById('wcFeedback').innerHTML='<span class="wc-fb-good">✅ 发音很棒！你说的是：'+said+'</span>';
+document.getElementById('wcFeedback').className='wc-feedback';
+showToast('🎉 跟读完美！');
+}else if(similarity>0.4){
+document.getElementById('wcFeedback').innerHTML='<span class="wc-fb-retry">⚠️ 你说的是：'+said+' ，再试一次？</span>';
+document.getElementById('wcFeedback').className='wc-feedback';
+}else{
+document.getElementById('wcFeedback').innerHTML='<span class="wc-fb-retry">🔄 没听清，你说的是：'+said+' ，慢一点再试试</span>';
+document.getElementById('wcFeedback').className='wc-feedback';
+}
+stopFollow();
+};
+
+recognition.onerror=function(e){
+document.getElementById('wcFeedback').innerHTML='<span class="wc-fb-retry">⚠️ 没听到声音，再试一次</span>';
+document.getElementById('wcFeedback').className='wc-feedback';
+stopFollow();
+};
+
+recognition.onend=function(){
+stopFollow();
+};
+
+recognition.start();
+setTimeout(function(){if(isListening)stopFollow()},5000);
+}
+
+function stopFollow(){
+isListening=false;
+if(recognition){try{recognition.stop()}catch(e){}}
+var btn=document.getElementById('followBtn');
+btn.classList.remove('on','listening');
+btn.innerHTML='🎤 跟读打分';
+}
+
+function stringSimilarity(a,b){
+if(a===b)return 1;
+if(a.length===0||b.length===0)return 0;
+var longer=a,shorter=b;
+if(a.length<b.length){longer=b;shorter=a}
+var ll=longer.length;
+if(ll===0)return 1;
+return(ll-editDistance(longer,shorter))/ll;
+}
+
+function editDistance(a,b){
+var m=[[],[]];
+for(var j=0;j<=b.length;j++)m[0][j]=j;
+for(var i=1;i<=a.length;i++){
+m[i%2]=[i];
+for(var j=1;j<=b.length;j++){
+m[i%2][j]=Math.min(m[(i-1)%2][j]+1,m[i%2][j-1]+1,m[(i-1)%2][j-1]+(a[i-1]===b[j-1]?0:1));
+}
+}
+return m[a.length%2][b.length];
+}
+
+function flipWord(){document.getElementById('wordCard').classList.toggle('flipped')}
+function nextWord(){stopFollow();showWord((wordIdx+1)%WORDS.length)}
+function prevWord(){stopFollow();showWord((wordIdx-1+WORDS.length)%WORDS.length)}
+function markWord(status){
+var el=document.getElementById('wli-'+wordIdx);
+var marks=lsGet('wordMarks_'+todayKey,{});
+marks[wordIdx]=status;lsSet('wordMarks_'+todayKey,marks);
+if(status==='known'){el.className='wli-status wli-known';el.textContent='✓ 已学会';showToast('太棒了！已标记学会 ✓')}
+else{el.className='wli-status wli-unknown';el.textContent='再练练';showToast('已加入复习列表')}
+if(wordIdx<WORDS.length-1)setTimeout(nextWord,500);
+}
+
+// ===== Timer =====
+function togTimer(){
+var btn=document.getElementById('timerBtn');
+if(timerInt){clearInterval(timerInt);timerInt=null;btn.textContent='继续';btn.classList.remove('running');return}
+btn.textContent='暂停';btn.classList.add('running');
+timerInt=setInterval(function(){
+timerSec--;
+if(timerSec<=0){clearInterval(timerInt);timerInt=null;btn.textContent='完成';btn.classList.remove('running');timerSec=30*60;showToast('背诵时间到！干得漂亮 🎉');return}
+var m=Math.floor(timerSec/60),s=timerSec%60;
+document.getElementById('timerD').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+},1000);
+}
+
+// ===== Weekly Report =====
+function openWeekly(){
+document.getElementById('weeklyOverlay').classList.add('show');
+renderWeekly();
+}
+function closeWeekly(){document.getElementById('weeklyOverlay').classList.remove('show')}
+function renderWeekly(){
+var weekStart=new Date(today);weekStart.setDate(today.getDate()-today.getDay());
+var days=['日','一','二','三','四','五','六'];
+var total=0,done=0,createDone=0,fitDone=0,engDone=0;
+var chartHtml='';
+for(var i=0;i<7;i++){
+var d=new Date(weekStart);d.setDate(weekStart.getDate()+i);
+var k='checks_'+fmtDate(d);var c=lsGet(k,{});
+var items=CHECK_ITEMS.filter(function(it){return it.id!=='fit'||[1,3,5].includes(d.getDay())});
+var dayTotal=items.length;var dayDone=Object.values(c).filter(Boolean).length;
+total+=dayTotal;done+=dayDone;
+if(c.create)createDone++;
+if(c.fit)fitDone++;
+if(c.eng)engDone++;
+var pct=dayTotal>0?Math.round(dayDone/dayTotal*100):0;
+var h=Math.max(4,pct*1.4);
+chartHtml+='<div class="week-bar"><div class="bar-val">'+dayDone+'/'+dayTotal+'</div><div class="bar-fill'+(pct===100?' full':'')+'" style="height:'+h+'px"></div><div class="bar-lbl">'+days[i]+'</div></div>';
+}
+document.getElementById('weekChart').innerHTML=chartHtml;
+var rate=total>0?Math.round(done/total*100):0;
+document.getElementById('weekStats').innerHTML=
+'<div class="week-stat"><div class="n" style="color:var(--pri)">'+done+'/'+total+'</div><div class="l">总完成数</div></div>'+
+'<div class="week-stat"><div class="n" style="color:var(--acc)">'+rate+'%</div><div class="l">完成率</div></div>'+
+'<div class="week-stat"><div class="n" style="color:#7c5cab">'+createDone+'</div><div class="l">创作天数</div></div>';
+document.getElementById('weeklyCreate').textContent='本周完成内容创作 '+createDone+' 天。'+(createDone>=5?'坚持得很好，继续保持！':createDone>=3?'不错，可以再增加发布频率。':'建议每天至少完成一条内容创作。');
+document.getElementById('weeklyFit').textContent='本周完成健身训练 '+fitDone+' 次（目标3次）。'+(fitDone>=3?'完美达成训练目标 💪':fitDone>=1?'有在运动，继续加油！':'本周未完成训练，下周从上肢日开始吧。');
+document.getElementById('weeklyEng').textContent='本周英语打卡 '+engDone+' 天。'+(engDone>=5?'词汇积累很扎实！':engDone>=3?'保持每天背单词的习惯。':'建议利用碎片时间每天背5个单词。');
+var suggest='下周建议：';
+if(createDone<5)suggest+='增加内容创作频率，';
+if(fitDone<3)suggest+='坚持每周3次健身，';
+if(engDone<5)suggest+='每天背英语单词，';
+suggest+='保持松弛感，享受成长的过程 🌟';
+document.getElementById('weeklySuggest').textContent=suggest;
+}
+
+// ===== Start =====
+init();
+</script>
+</body>
+</html>
